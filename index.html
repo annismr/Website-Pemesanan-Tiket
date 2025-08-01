@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>KeretaKu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://ai-public.creatie.ai/gen_page/tailwind-custom.css" rel="stylesheet">    
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+    <header class="bg-white shadow-sm">
+        <nav class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">            
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <span class="ml-3 text-xl font-semibold text-gray-900"><i class="fa-solid fa-train"></i>  KeretaKu</span>
+                </div>
+                <div class="flex items-center space-x-4">                    
+                    <a href="#" class="text-gray-600 hover:text-custom">Help</a>
+                    <button class="!rounded-button bg-custom px-4 py-2 text-white hover:bg-custom/90">Login</button>
+                    <button class="!rounded-button bg-custom px-4 py-2 text-white hover:bg-custom/90">Sign In</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">            
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-8 text-center">Pesan Tiket Sekarang</h1>
+                
+                <form class="space-y-6" method="GET">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">                        
+                        
+                        <!-- Dropdown untuk stasiun tujuan-->
+                        <div class="relative">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dari</label>
+                                    <div class="relative">
+                                        <i class="fas fa-map-marker-alt absolute left-3 top-3 text-gray-400"></i>
+                                        <select name="dari" class="!rounded-button w-full pl-10 pr-3 py-2 border border-gray-300 focus:ring-custom focus:border-custom">
+                                            <option value="" disabled selected>Pilih stasiun keberangkatan</option>
+                                            <option value="jakarta">Jakarta</option>
+                                            <option value="yogyakarta">Yogyakarta</option>
+                                            <option value="surabaya">Surabaya</option>
+                                            <option value="bandung">Bandung</option>
+                                        </select>
+                                    </div>
+                        </div>
+                        
+                        <!-- Dropdown untuk stasiun tujuan-->
+                        <div class="relative">                            
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ke</label>
+                            <div class="relative">                                
+                                <i class="fas fa-map-marker-alt absolute left-3 top-3 text-gray-400"></i>
+                                <select name="ke" class="!rounded-button w-full pl-10 pr-3 py-2 border border-gray-300 focus:ring-custom focus:border-custom">
+                                    <option value="" disabled selected>Pilih stasiun tujuan</option>
+                                    <option value="jakarta">Jakarta</option>
+                                    <option value="yogyakarta">Yogyakarta</option>
+                                    <option value="surabaya">Surabaya</option>
+                                    <option value="bandung">Bandung</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    
+                        <!-- Date picke untuk tanggal keberangkatan -->
+                        <div>                    
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Pergi</label>                            
+                            <div class="relative">
+                                <i class="fas fa-calendar absolute left-3 top-3 text-gray-400"></i>
+                                <input type="date" name="tanggal" value="<?= isset($_GET['tanggal']) ? $_GET['tanggal'] : '' ?>" class="!rounded-button w-full pl-10 pr-3 py-2 border-border-gray-300 focus:ring-custom focus:border-custom">                            
+                            </div>
+                        </div>
+                        
+                        <!-- Input angka untuk jumlah penumpang -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Penumpang</label>
+                            <div class="relative">
+                                <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+                                <input type="number" name="penumpang" id="penumpang" class="!rounded-button w-full pl-10 pr-3 py-2 border border-gray-300 focus:ring-custom focus:border-custom" min="1" oninput="this.value = this.value < 1 ? 1 : this.value">
+                            </div>
+                        </div>
+
+                    <div class="col-span-full mt-4">
+                        <button type="button" id="btnCariKereta" class="w-full bg-custom text-white py-3 px-4 font-medium hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom !rounded-button">
+                            <i class="fas fa-search mr-2"></i>Cari Kereta
+                        </button>
+                    </div>
+                </form>            
+            </div>
+            
+            <!-- Tempat menampilkan hasil input -->
+            <div id="hasilInput" class="mt-8 bg-gray-100 p-4 rounded-lg shadow text-gray-800 hidden">
+                <h2 class="text-lg font-bold mb-2">Hasil Input:</h2>
+                <p id="output"></p>
+            </div>
+
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow">                    
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-route text-custom text-xl"></i>                        
+                        <h3 class="ml-3 text-lg font-semibold">Rute Populer</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600" style="width: 400px;">                         
+                        <li>Jakarta - Yogyakarta</li>
+                        <li>Surabaya - Malang</li>
+                        <li>Bandung - Jakarta</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">                    
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-train text-custom text-xl"></i>                        
+                        <h3 class="ml-3 text-lg font-semibold">Kereta Hari Ini</h3>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">100</p>
+                    <p class="text-gray-600">Kereta yang tersedia hari ini</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">                    
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-ticket-alt text-custom text-xl"></i>
+                        <h3 class="ml-3 text-lg font-semibold">Tarif Utama</h3>
+                    </div>
+                    <ul class="space-y-2 text-gray-600">                        
+                        <li>Ekonomi : mulai dari Rp50.000</li>
+                        <li>Bisnis : mulai dari Rp250.000</li>
+                        <li>Eksekutif : mulai dari Rp350.000</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">        
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">About Keretaku</h4>
+                    <ul class="space-y-2">                        
+                        <li><a href="#" class="text-gray-300 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Careers</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Press</a></li>
+                    </ul>                
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">                        
+                        <li><a href="#" class="text-gray-300 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Terms & Conditions</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Privacy Policy</a></li>                        
+                        <li><a href="#" class="text-gray-300 hover:text-white">Cookie Policy</a></li>
+                    </ul>
+                </div>                
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect With Us</h4>
+                    <div class="flex space-x-4">                        
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>                
+                </div>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">                
+                <p>&copy; 2024 KeretaKu. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('btnCariKereta').addEventListener('click', function () {
+            // Ambil nilai dari input form
+            const dari = document.querySelector('select[name="dari"]').value;
+            const ke = document.querySelector('select[name="ke"]').value;
+            const tanggal = document.querySelector('input[name="tanggal"]').value;
+            const penumpang = document.querySelector('input[name="penumpang"]').value;
+    
+            // Validasi input
+            if (!dari || !ke || !tanggal || !penumpang) {
+                alert('Mohon lengkapi semua data sebelum mencari!');
+                return;
+            }
+    
+            // Tampilkan hasil input
+            const output = `
+                <ul>
+                    <li><strong>Stasiun Keberangkatan:</strong> ${dari}</li>
+                    <li><strong>Stasiun Tujuan:</strong> ${ke}</li>
+                    <li><strong>Tanggal:</strong> ${tanggal}</li>
+                    <li><strong>Jumlah Penumpang:</strong> ${penumpang}</li>
+                </ul>
+            `;
+            document.getElementById('output').innerHTML = output;
+            document.getElementById('hasilInput').classList.remove('hidden');
+    
+            // Mengosongkan input form setelah pencarian
+            document.querySelector('select[name="dari"]').value = '';
+            document.querySelector('select[name="ke"]').value = '';
+            document.querySelector('input[name="tanggal"]').value = '';
+            document.querySelector('input[name="penumpang"]').value = 1; // Reset ke nilai default
+        });
+    
+        // JavaScript untuk menampilkan angka default 1
+        document.getElementById('penumpang').value = 1;
+    
+        // Fungsi untuk mengisi nilai default dari parameter URL
+        function setDefaultValues() {
+            const urlParams = new URLSearchParams(window.location.search);    
+            // Set nilai dropdown "Dari"
+            const dari = urlParams.get('dari');
+            if (dari) {
+                document.querySelector(`select[name="dari"] option[value="${dari}"]`).selected = true;
+            }
+            // Set nilai dropdown "Ke"
+            const ke = urlParams.get('ke');
+            if (ke) {
+                document.querySelector(`select[name="ke"] option[value="${ke}"]`).selected = true;
+            }    
+            // Set nilai input tanggal
+            const tanggal = urlParams.get('tanggal');
+            if (tanggal) {
+                document.querySelector('input[name="tanggal"]').value = tanggal;
+            }    
+            // Set nilai input penumpang
+            const penumpang = urlParams.get('penumpang');
+            if (penumpang) {
+                document.querySelector('input[name="penumpang"]').value = penumpang;
+            }
+        }
+    
+        // Jalankan fungsi setelah halaman dimuat
+        document.addEventListener('DOMContentLoaded', setDefaultValues);
+    </script>
+      
+</body>
+</html>
